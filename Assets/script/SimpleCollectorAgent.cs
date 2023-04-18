@@ -25,23 +25,22 @@ public class SimpleCollectorAgent : Agent
     /// </summary>
     public override void OnEpisodeBegin()
     {
+
+
         // Reset agent position, rotation
         transform.position = startPosition;
-        transform.rotation = Quaternion.Euler(Vector3.up * Random.Range(0f, 360f));
+        transform.rotation = Quaternion.Euler(Vector3.up* Random.Range(0f, 360f));
         rigidbody.velocity = Vector3.zero;
-        rigidbody.angularVelocity = Vector3.zero;
-        Vector3 newPos = new Vector3(4, 0.5f, 4);
+        // rigidbody.angularVelocity = Vector3.zero;
         // Reset platform position (5 meters away from the agent in a random direction)
-        platform.transform.position = startPosition + newPos + Quaternion.Euler(Vector3.up * Random.Range(0f, 360f)) * Vector3.forward * 5f;
-        float onGround = platform.transform.position.y - 1;
-        
+        platform.transform.position = startPosition + Quaternion.Euler(Vector3.up* Random.Range(0f, 360f)) * Vector3.forward* Random.Range(0f, 50f);
     }
 
-    /// <summary>
-    /// Controls the agent with human input
-    /// </summary>
-    /// <param name="actionsOut">The actions parsed from keyboard input</param>
-    public override void Heuristic(in ActionBuffers actionsOut)
+/// <summary>
+/// Controls the agent with human input
+/// </summary>
+/// <param name="actionsOut">The actions parsed from keyboard input</param>
+public override void Heuristic(in ActionBuffers actionsOut)
     {
 
         // Read input values and round them. GetAxisRaw works better in this case
@@ -88,8 +87,9 @@ public class SimpleCollectorAgent : Agent
     private void OnTriggerEnter(Collider other)
     {
         // If the other object is a collectible, reward and end episode
-        if (other.tag == "collectible")
+        if (other.tag == "apple")
         {
+            Debug.Log("Text: hit");
             AddReward(1f);
             EndEpisode();
         }
