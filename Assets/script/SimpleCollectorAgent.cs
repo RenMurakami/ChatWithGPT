@@ -33,7 +33,7 @@ public class SimpleCollectorAgent : Agent
         rigidbody.velocity = Vector3.zero;
         // rigidbody.angularVelocity = Vector3.zero;
         // Reset platform position (5 meters away from the agent in a random direction)
-        platform.transform.position = startPosition + Quaternion.Euler(Vector3.up* Random.Range(0f, 360f)) * Vector3.forward* Random.Range(0f, 50f);
+        platform.transform.position = startPosition + Quaternion.Euler(Vector3.up* Random.Range(0f, 360f)) * Vector3.forward*5.0f;
     }
 
 /// <summary>
