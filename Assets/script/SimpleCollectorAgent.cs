@@ -2,6 +2,7 @@ using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using UnityEngine;
 
+
 public class SimpleCollectorAgent : Agent
 {
     [Tooltip("The platform to be moved around")]
@@ -10,6 +11,10 @@ public class SimpleCollectorAgent : Agent
     private Vector3 startPosition;
     private SimpleCharacterController characterController;
     new private Rigidbody rigidbody;
+
+    public Vector3 minPosition;
+    public Vector3 maxPosition;
+
     /// <summary>
     /// Called once when the agent is first initialized
     /// </summary>
@@ -29,18 +34,25 @@ public class SimpleCollectorAgent : Agent
 
         // Reset agent position, rotation
         transform.position = startPosition;
-        transform.rotation = Quaternion.Euler(Vector3.up* Random.Range(0f, 360f));
+        transform.rotation = Quaternion.Euler(Vector3.up * Random.Range(0f, 360f));
         rigidbody.velocity = Vector3.zero;
-        // rigidbody.angularVelocity = Vector3.zero;
+        rigidbody.angularVelocity = Vector3.zero;
+        Vector3 newPos = new Vector3(4, 0.5f, 4);
         // Reset platform position (5 meters away from the agent in a random direction)
-        platform.transform.position = startPosition + Quaternion.Euler(Vector3.up* Random.Range(0f, 360f)) * Vector3.forward*5.0f;
+        Vector3 randomPosition = new Vector3(
+            Random.Range(minPosition.x, maxPosition.x),
+            Random.Range(minPosition.y, maxPosition.y),
+            Random.Range(minPosition.z, maxPosition.z)
+        );
+        platform.transform.position = startPosition + randomPosition + newPos + Quaternion.Euler(Vector3.up * Random.Range(0f, 360f)) * Vector3.forward * 5f;
+        float onGround = platform.transform.position.y - 1;
     }
 
 /// <summary>
 /// Controls the agent with human input
 /// </summary>
 /// <param name="actionsOut">The actions parsed from keyboard input</param>
-public override void Heuristic(in ActionBuffers actionsOut)
+    public override void Heuristic(in ActionBuffers actionsOut)
     {
 
         // Read input values and round them. GetAxisRaw works better in this case
@@ -62,13 +74,15 @@ public override void Heuristic(in ActionBuffers actionsOut)
     /// <param name="actions">The actions received</param>
     public override void OnActionReceived(ActionBuffers actions)
     {
-        // Punish and end episode if the agent strays too far
-        if (Vector3.Distance(startPosition, transform.position) > 65f)
+        //If it takes too long, it will add negative reward every iteration.
+        AddReward(-1 / 20000000);
+
+        if (Vector3.Distance(platform.transform.position, transform.position) > 200f || this.transform.position.y<-0.1)
         {
-            AddReward(-1f);
+            Debug.Log("Text: TOO FAR");
             EndEpisode();
         }
-
+        //AddReward(1 / Vector3.Distance(platform.transform.position, transform.position));
         // Convert actions from Discrete (0, 1, 2) to expected input values (-1, 0, +1)
         // of the character controller
         float vertical = actions.DiscreteActions[0] <= 1 ? actions.DiscreteActions[0] : -1;

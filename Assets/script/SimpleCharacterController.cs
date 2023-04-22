@@ -22,12 +22,13 @@ public class SimpleCharacterController : MonoBehaviour
     public bool JumpInput { get; set; }
 
     new private Rigidbody rigidbody;
-    private CapsuleCollider capsuleCollider;
-
+    //private CapsuleCollider capsuleCollider;
+    private BoxCollider capsuleCollider;
     private void Awake()
     {
         rigidbody = GetComponent<Rigidbody>();
-        capsuleCollider = GetComponent<CapsuleCollider>();
+        //capsuleCollider = GetComponent<CapsuleCollider>();
+        capsuleCollider = GetComponent<BoxCollider>();
     }
 
     private void FixedUpdate()
@@ -39,9 +40,15 @@ public class SimpleCharacterController : MonoBehaviour
     private void CheckGrounded()
     {
         IsGrounded = false;
+        /*
         float capsuleHeight = Mathf.Max(capsuleCollider.radius * 2f, capsuleCollider.height);
         Vector3 capsuleBottom = transform.TransformPoint(capsuleCollider.center - Vector3.up * capsuleHeight / 2f);
         float radius = transform.TransformVector(capsuleCollider.radius, 0f, 0f).magnitude;
+        */
+        float capsuleHeight = Mathf.Max(capsuleCollider.size.x * 2f, capsuleCollider.size.z * 2f, capsuleCollider.size.y);
+        Vector3 capsuleBottom = transform.TransformPoint(capsuleCollider.center - Vector3.up * capsuleHeight / 2f);
+        float radius = transform.TransformVector(capsuleCollider.size.x, 0f, 0f).magnitude;
+
         Ray ray = new Ray(capsuleBottom + transform.up * .01f, -transform.up);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, radius * 5f))
