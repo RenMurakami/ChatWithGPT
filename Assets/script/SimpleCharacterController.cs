@@ -16,6 +16,8 @@ public class SimpleCharacterController : MonoBehaviour
     [Tooltip("Upward speed to apply when jumping in meters/second")]
     public float jumpSpeed = 4f;
 
+    public GameObject player;
+
     public bool IsGrounded { get; private set; }
     public float ForwardInput { get; set; }
     public float TurnInput { get; set; }
@@ -69,13 +71,22 @@ public class SimpleCharacterController : MonoBehaviour
     private void ProcessActions()
     {
         // Process Turning
-        if (TurnInput != 0f)
+        if (Vector3.Distance(player.transform.position, transform.position) < 10f && Vector3.Distance(player.transform.position, transform.position) != 0f)
+        {
+            this.rigidbody.angularVelocity = Vector3.zero;
+        }
+        else if(TurnInput != 0f)
         {
             float angle = Mathf.Clamp(TurnInput, -1f, 1f) * turnSpeed;
             transform.Rotate(Vector3.up, Time.fixedDeltaTime * angle);
         }
+
         // Process Movement/Jumping
-        if (IsGrounded)
+        if (Vector3.Distance(player.transform.position, transform.position) < 10f && Vector3.Distance(player.transform.position, transform.position) != 0f)
+        {
+            this.rigidbody.velocity = Vector3.zero;
+        }
+        else if (IsGrounded)
         {
             // Reset the velocity
             rigidbody.velocity = Vector3.zero;

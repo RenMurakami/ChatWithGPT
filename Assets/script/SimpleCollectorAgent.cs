@@ -32,8 +32,6 @@ public class SimpleCollectorAgent : Agent
     /// </summary>
     public override void OnEpisodeBegin()
     {
-
-
         // Reset agent position, rotation
         transform.position = startPosition;
         transform.rotation = Quaternion.Euler(Vector3.up * Random.Range(0f, 360f));
@@ -82,31 +80,22 @@ public class SimpleCollectorAgent : Agent
         if (Vector3.Distance(platform.transform.position, transform.position) > 200f || this.transform.position.y<-0.1)
         {
             Debug.Log("Text: TOO FAR");
+        }
+        
+        if(this.transform.position.y < -0.1)
+        {
             EndEpisode();
         }
-        //AddReward(1 / Vector3.Distance(platform.transform.position, transform.position));
-        // Convert actions from Discrete (0, 1, 2) to expected input values (-1, 0, +1)
-        // of the character controller
-        if (Vector3.Distance(player.transform.position, transform.position) < 10f && Vector3.Distance(player.transform.position, transform.position) != 0f)
-        {
-            Debug.Log("Text: player STOP");
-            this.rigidbody.velocity = Vector3.zero;
-            this.rigidbody.angularVelocity = Vector3.zero;
-            
-            //this.rigidbody.position = transform.position;
-            //this.transform.position = transform.position;
-            //this.transform.eulerAngles = Vector3.zero;
-        }
-        else
-        {
-            float vertical = actions.DiscreteActions[0] <= 1 ? actions.DiscreteActions[0] : -1;
-            float horizontal = actions.DiscreteActions[1] <= 1 ? actions.DiscreteActions[1] : -1;
-            bool jump = actions.DiscreteActions[2] > 0;
+       
+        Debug.Log("Text: player MOVE");
+        float vertical = actions.DiscreteActions[0] <= 1 ? actions.DiscreteActions[0] : -1;
+        float horizontal = actions.DiscreteActions[1] <= 1 ? actions.DiscreteActions[1] : -1;
+        bool jump = actions.DiscreteActions[2] > 0;
 
-            characterController.ForwardInput = vertical;
-            characterController.TurnInput = horizontal;
-            characterController.JumpInput = jump;
-        }
+        characterController.ForwardInput = vertical;
+        characterController.TurnInput = horizontal;
+        characterController.JumpInput = jump;
+        
         
     }
 
@@ -121,20 +110,7 @@ public class SimpleCollectorAgent : Agent
         Debug.Log("Text: hit");
         if (other.tag == "apple")
         {
-
-           // Debug.Log("Text: apple");
             AddReward(1f);
-            //EndEpisode();
-        }
-
-        if(other.tag == "player"){
-
-          //  Debug.Log("Text: player");
-            this.rigidbody.velocity = Vector3.zero;
-            this.rigidbody.angularVelocity = Vector3.zero; 
-           // print(Time.time);
-            new WaitForSecondsRealtime(5);
-           // print(Time.time);
         }
     }
 }

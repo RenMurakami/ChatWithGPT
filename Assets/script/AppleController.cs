@@ -19,12 +19,11 @@ public class AppleController : MonoBehaviour
     {
         if (this.transform.position.y < -1)
         {
-
             Debug.Log("Apple relocation");
             Vector3 randomPosition = new Vector3(
-            Random.Range(minPosition.x, maxPosition.x),
-            Random.Range(minPosition.y, maxPosition.y),
-            Random.Range(minPosition.z, maxPosition.z)
+                Random.Range(minPosition.x, maxPosition.x),
+                Random.Range(minPosition.y, maxPosition.y),
+                Random.Range(minPosition.z, maxPosition.z)
             );
             this.transform.position = startPosition + randomPosition + Quaternion.Euler(Vector3.up * Random.Range(0f, 360f)) * Vector3.forward * 20f;
             this.GetComponent<Rigidbody>().velocity = Vector3.zero;
