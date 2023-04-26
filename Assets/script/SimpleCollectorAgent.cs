@@ -2,11 +2,13 @@ using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using UnityEngine;
 
+using System.Collections;
 
 public class SimpleCollectorAgent : Agent
 {
     [Tooltip("The platform to be moved around")]
     public GameObject platform;
+    public GameObject player;
     
     private Vector3 startPosition;
     private SimpleCharacterController characterController;
@@ -85,13 +87,27 @@ public class SimpleCollectorAgent : Agent
         //AddReward(1 / Vector3.Distance(platform.transform.position, transform.position));
         // Convert actions from Discrete (0, 1, 2) to expected input values (-1, 0, +1)
         // of the character controller
-        float vertical = actions.DiscreteActions[0] <= 1 ? actions.DiscreteActions[0] : -1;
-        float horizontal = actions.DiscreteActions[1] <= 1 ? actions.DiscreteActions[1] : -1;
-        bool jump = actions.DiscreteActions[2] > 0;
+        if (Vector3.Distance(player.transform.position, transform.position) < 10f && Vector3.Distance(player.transform.position, transform.position) != 0f)
+        {
+            Debug.Log("Text: player STOP");
+            this.rigidbody.velocity = Vector3.zero;
+            this.rigidbody.angularVelocity = Vector3.zero;
+            
+            //this.rigidbody.position = transform.position;
+            //this.transform.position = transform.position;
+            //this.transform.eulerAngles = Vector3.zero;
+        }
+        else
+        {
+            float vertical = actions.DiscreteActions[0] <= 1 ? actions.DiscreteActions[0] : -1;
+            float horizontal = actions.DiscreteActions[1] <= 1 ? actions.DiscreteActions[1] : -1;
+            bool jump = actions.DiscreteActions[2] > 0;
 
-        characterController.ForwardInput = vertical;
-        characterController.TurnInput = horizontal;
-        characterController.JumpInput = jump;
+            characterController.ForwardInput = vertical;
+            characterController.TurnInput = horizontal;
+            characterController.JumpInput = jump;
+        }
+        
     }
 
     /// <summary>
@@ -101,11 +117,24 @@ public class SimpleCollectorAgent : Agent
     private void OnTriggerEnter(Collider other)
     {
         // If the other object is a collectible, reward and end episode
+
+        Debug.Log("Text: hit");
         if (other.tag == "apple")
         {
-            Debug.Log("Text: hit");
+
+           // Debug.Log("Text: apple");
             AddReward(1f);
-            EndEpisode();
+            //EndEpisode();
+        }
+
+        if(other.tag == "player"){
+
+          //  Debug.Log("Text: player");
+            this.rigidbody.velocity = Vector3.zero;
+            this.rigidbody.angularVelocity = Vector3.zero; 
+           // print(Time.time);
+            new WaitForSecondsRealtime(5);
+           // print(Time.time);
         }
     }
 }

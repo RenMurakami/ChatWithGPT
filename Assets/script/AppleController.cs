@@ -17,8 +17,10 @@ public class AppleController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (this.transform.position.y < -0.1)
+        if (this.transform.position.y < -1)
         {
+
+            Debug.Log("Apple relocation");
             Vector3 randomPosition = new Vector3(
             Random.Range(minPosition.x, maxPosition.x),
             Random.Range(minPosition.y, maxPosition.y),
