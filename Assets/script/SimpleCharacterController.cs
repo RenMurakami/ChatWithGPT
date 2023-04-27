@@ -73,8 +73,21 @@ public class SimpleCharacterController : MonoBehaviour
         // Process Turning
         if (Vector3.Distance(player.transform.position, transform.position) < 10f && Vector3.Distance(player.transform.position, transform.position) != 0f)
         {
+            // Calculate the direction vector
+            Vector3 direction = (player.transform.position - transform.position).normalized;
+            direction.y = 0; // Prevent the object from rotating upwards or downwards
+
+            // Calculate the target rotation
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+
+            // Slerp the object's rotation towards the target rotation
+            float rotationSpeed = 5.0f; // Adjust this value to control the rotation speed
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+
+            // Reset the angular velocity
             this.rigidbody.angularVelocity = Vector3.zero;
         }
+
         else if(TurnInput != 0f)
         {
             float angle = Mathf.Clamp(TurnInput, -1f, 1f) * turnSpeed;
